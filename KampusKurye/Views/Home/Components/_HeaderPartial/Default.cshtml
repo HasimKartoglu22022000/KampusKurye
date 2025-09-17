@@ -1,0 +1,94 @@
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid">
+
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+            <img src="https://static.readdy.ai/image/299af702a1196a86d193f030b8851b68/5f91dbafdd551209f52df828ee3ffa22.png" alt="logo" class="img-fluid" style="height:64px;">
+                 
+        </a>
+
+        <!-- Campus selector (desktop only) -->
+        <div class="d-none d-lg-flex align-items-center ms-3">
+            <div class="dropdown">
+                <button class="btn btn-light d-flex align-items-center gap-2" id="campusDropdownBtn" data-bs-toggle="dropdown">
+                    <i class="ri-map-pin-line"></i>
+                    <span id="selectedCampus">Özyeğin Üniversitesi</span>
+                    <i class="ri-arrow-down-s-line"></i>
+                </button>
+                <div class="dropdown-menu p-2" style="min-width: 18rem;">
+                    <div class="mb-2">
+                        <input class="form-control form-control-sm" type="text" placeholder="Kampüs ara...">
+                    </div>
+                    <div class="list-group" style="max-height: 240px; overflow:auto;">
+                        <button class="list-group-item list-group-item-action">Özyeğin Üniversitesi</button>
+                        <button class="list-group-item list-group-item-action">Boğaziçi Üniversitesi</button>
+                        <button class="list-group-item list-group-item-action">İTÜ</button>
+                        <button class="list-group-item list-group-item-action">YTÜ</button>
+                        <button class="list-group-item list-group-item-action">Marmara Üniversitesi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar content -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <!-- Cart Dropdown -->
+                <li class="nav-item dropdown me-2">
+                    <a class="nav-link btn btn-light position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="ri-shopping-cart-line fs-4"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">2</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 18rem;">
+                        <li class="dropdown-item">
+                            <div class="d-flex justify-content-between">
+                                <span>Ürün 1</span>
+                                <span>₺100</span>
+                            </div>
+                        </li>
+                        <li class="dropdown-item">
+                            <div class="d-flex justify-content-between">
+                                <span>Ürün 2</span>
+                                <span>₺200</span>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center fw-bold" href="/cart">Sepete Git</a></li>
+                    </ul>
+                </li>
+
+                <!-- User dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link btn btn-light d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
+                        <i class="ri-user-line fs-4"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-item-text">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:38px;height:38px;">
+                                    <i class="ri-user-line"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">Ahmet Yılmaz</div>
+                                    <small class="text-muted">ahmet.yilmaz@email.com</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Hesap Bilgileri</a></li>
+                        <li><a class="dropdown-item" href="#">Siparişlerim</a></li>
+                        <li><button class="dropdown-item">Çıkış Yap</button></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
