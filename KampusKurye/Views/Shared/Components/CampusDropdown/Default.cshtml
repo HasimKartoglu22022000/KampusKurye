@@ -1,0 +1,58 @@
+﻿@model IEnumerable<KampusKurye.Models.CollegesModel>
+
+<div class="d-none d-lg-flex align-items-center ms-3">
+    <div class="dropdown">
+        <button class="btn btn-light d-flex align-items-center gap-2" id="campusDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="ri-map-pin-line"></i>
+            <span id="selectedCampus">Kampüs Seçin</span>
+            <i class="ri-arrow-down-s-line"></i>
+        </button>
+        <div class="dropdown-menu p-2" style="min-width: 18rem;">
+            <div class="mb-2">
+                <input class="form-control form-control-sm" type="text" placeholder="Kampüs ara..." id="campusSearch">
+            </div>
+            <div class="list-group" style="max-height: 240px; overflow:auto;" id="campusList">
+                @foreach (var college in Model)
+                {
+                    <button type="button" class="list-group-item list-group-item-action" data-college-id="@college.college_id" onclick="selectCampus(this)">
+                        @college.college_name
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectCampus(el) {
+            const name = el.innerText.trim();
+            const id = el.dataset.collegeId;
+            const sel = document.getElementById('selectedCampus');
+            if (sel) sel.innerText = name;
+            localStorage.setItem('selectedCampusId', id);
+            localStorage.setItem('selectedCampusName', name);
+        }
+
+        (function() {
+            const search = document.getElementById('campusSearch');
+            const list = document.getElementById('campusList');
+            if (search && list) {
+                search.addEventListener('input', function () {
+                    const q = this.value.toLowerCase();
+                    Array.from(list.children).forEach(btn => {
+                        btn.style.display = btn.innerText.toLowerCase().includes(q) ? '' : 'none';
+                    });
+                });
+            }
+
+            window.addEventListener('load', function () {
+                const saved = localStorage.getItem('selectedCampusName');
+                if (saved) {
+                    const sel = document.getElementById('selectedCampus');
+                    if (sel) sel.innerText = saved;
+                }
+            });
+        })();
+    </script>
+}

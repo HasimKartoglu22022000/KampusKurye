@@ -1,21 +1,32 @@
 using System.Diagnostics;
-using KampusKurye.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using KampusKurye.Models;
+using KampusKurye.DbContexts;
 
 namespace KampusKurye.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AppDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
-        public IActionResult Index()
+        // GET: / or /Home/Index
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var restaurants = await _db.Restaurants
+                .AsNoTracking()
+                .Include(r => r.College)
+                .OrderBy(r => r.restaurant_name)
+                .ToListAsync();
+
+            return View(restaurants);
         }
 
         public IActionResult Privacy()

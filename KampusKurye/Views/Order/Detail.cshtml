@@ -1,0 +1,104 @@
+﻿@model KampusKurye.Models.OrderModel
+
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="bg-gray-50 min-vh-100">
+    <div class="container my-5">
+        <div class="card shadow-sm border-0 rounded-4 mx-auto" style="max-width: 900px;">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="fw-bold mb-3">Sipariş Detayı</h2>
+
+                <div class="mb-3 text-muted">
+                    <div><strong>Sipariş No:</strong> @Model.order_id (@Model.order_guid)</div>
+                    <div><strong>Oluşturulma:</strong> @Model.order_created_at.ToString("dd.MM.yyyy HH:mm")</div>
+                    <div><strong>Durum:</strong> @Model.order_status</div>
+                </div>
+
+                <hr />
+
+                <h5 class="fw-semibold mb-2">Teslimat Bilgileri</h5>
+                <p class="mb-1">
+                    <strong>Adres:</strong><br />
+                    @Model.order_delivery_address
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(Model.order_customer_note))
+                {
+                    <p class="mb-3">
+                        <strong>Müşteri Notu:</strong><br />
+                        @Model.order_customer_note
+                    </p>
+                }
+
+                <hr />
+
+                <h5 class="fw-semibold mb-3">Ürünler</h5>
+
+                @if (Model.Items != null && Model.Items.Any())
+                {
+                    <div class="table-responsive mb-3">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th class="text-center">Adet</th>
+                                    <th class="text-end">Birim Fiyat</th>
+                                    <th class="text-end">Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.product_imgurl))
+                                                {
+                                                    <img src="@item.product_imgurl"
+                                                         alt="@item.product_name"
+                                                         class="rounded me-2"
+                                                         style="width:50px;height:50px;object-fit:cover;" />
+                                                }
+                                            <span>@item.product_name</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@item.product_quantity</td>
+                                    <td class="text-end">
+                                        @item.product_price.ToString("C", new System.Globalization.CultureInfo("tr-TR"))
+                                    </td>
+                                    <td class="text-end">
+                                        @((item.product_price * item.product_quantity)
+                                                                            .ToString("C", new System.Globalization.CultureInfo("tr-TR")) )
+                                </td>
+                            </tr>
+                                                        }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-end fw-bold fs-5">
+                        Toplam: @Model.order_total_price.ToString("C", new System.Globalization.CultureInfo("tr-TR"))
+                    </div>
+                }
+                else
+                {
+                    <p>Bu siparişe ait ürün bulunamadı.</p>
+                }
+
+                <div class="mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                        Ana Sayfaya Dön
+                    </a>
+                    <a asp-controller="Order" asp-action="List" class="btn btn-primary ms-2">
+                        Diğer Siparişlerim
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>

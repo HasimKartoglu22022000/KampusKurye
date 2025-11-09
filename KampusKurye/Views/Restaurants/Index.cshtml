@@ -1,0 +1,184 @@
+﻿@model KampusKurye.Models.RestaurantDetailsViewModel
+@using System.Linq
+
+@{
+    ViewData["Title"] = $"{Model.Restaurant.restaurant_name} - Kampüs Yemek";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var heroImage = string.IsNullOrWhiteSpace(Model.Restaurant.restaurant_img_url)
+        ? Url.Content("~/images/placeholder-hero.jpg")
+        : Model.Restaurant.restaurant_img_url;
+
+    var rating = Model.Restaurant.restaurant_point;
+    var minPrice = Math.Round(rating * 10);
+
+    var hasCategories = Model.Categories != null && Model.Categories.Any();
+    var firstCategoryId = hasCategories ? Model.Categories.First().categories_id : 0;
+}
+
+<header class="bg-white shadow-sm sticky-top">
+    <div class="container py-3">
+        <div class="d-flex align-items-center">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary me-3 rounded-circle">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <h1 class="h4 mb-0 text-truncate">@Model.Restaurant.restaurant_name</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="position-relative" style="height:320px;">
+        <img src="@heroImage"
+             alt="@Model.Restaurant.restaurant_name"
+             class="w-100 h-100 object-fit-cover" />
+        <div class="position-absolute top-0 start-0 w-100 h-100"
+             style="background: linear-gradient(to top, rgba(0,0,0,0.6), transparent)">
+        </div>
+        <div class="position-absolute bottom-0 start-0 text-white p-4">
+            <h2 class="display-6 fw-bold mb-2">@Model.Restaurant.restaurant_name</h2>
+
+            <div class="d-flex align-items-center flex-wrap gap-3 mb-2">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-star-fill text-warning me-1"></i>
+                    <span class="fw-medium">@rating.ToString("0.0")</span>
+                    <span class="text-white-50 ms-1">puan</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-clock me-1"></i>
+                    <span>15-25 dk</span>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-currency-dollar me-1"></i>
+                    <span>Min. @minPrice ₺</span>
+                </div>
+            </div>
+
+            <span class="badge bg-success rounded-pill px-3 py-2">
+                <i class="bi bi-truck me-1"></i>
+                Ücretsiz Teslimat
+            </span>
+        </div>
+    </section>
+
+    <div class="container py-4">
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="h5 fw-bold mb-3">Restoran Hakkında</h3>
+                <p class="text-muted mb-4">
+                    @Model.Restaurant.restaurant_description
+                </p>
+                <div class="row text-muted">
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-clock me-2"></i>
+                        <span class="fw-medium">Çalışma Saatleri:</span>
+                        <div class="mt-1">@Model.Restaurant.restaurant_working_hours</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <span class="fw-medium">Adres:</span>
+                        <div class="mt-1">@Model.Restaurant.restaurant_address</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-telephone me-2"></i>
+                        <span class="fw-medium">Telefon:</span>
+                        <div class="mt-1">@Model.Restaurant.restaurant_phone</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (!hasCategories)
+        {
+            <div class="alert alert-light border rounded-3">
+                Bu restorana ait tanımlı kategori bulunamadı.
+            </div>
+        }
+        else
+        {
+            <div class="sticky-top bg-white mb-4" style="top:56px; z-index:1020;">
+                <div class="border-bottom pb-2 mb-2">
+                    <nav class="nav nav-pills flex-nowrap overflow-auto py-2 justify-content-start">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            var isActive = cat.categories_id == firstCategoryId;
+                            <button class="nav-link flex-shrink-0 me-2 px-3 py-2 rounded-pill @(isActive ? "active" : "bg-light text-dark")"
+                                    data-bs-toggle="pill"
+                                    data-bs-target="#cat-@cat.categories_id"
+                                    type="button">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>
+                                @cat.categories_name
+                            </button>
+                        }
+                    </nav>
+                </div>
+            </div>
+            <div class="tab-content">
+                @foreach (var cat in Model.Categories)
+                {
+                    var productsInCategory = (Model.Products ?? Enumerable.Empty<KampusKurye.Models.ProductModel>())
+                    .Where(p => p.categories_id == cat.categories_id)
+                    .ToList();
+
+                    var isActive = cat.categories_id == firstCategoryId;
+
+                    <div class="tab-pane fade @(isActive ? "show active" : "")"
+                         id="cat-@cat.categories_id">
+                        <h3 class="h5 fw-bold mb-4">@cat.categories_name</h3>
+
+                        @if (!productsInCategory.Any())
+                        {
+                            <div class="alert alert-light small text-muted border rounded-3">
+                                Bu kategoride ürün bulunamadı.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row g-4">
+                                @foreach (var product in productsInCategory)
+                                {
+                                    <div class="col-12 col-md-6">
+                                        <div class="card h-100 border-0 shadow-sm">
+                                            <div class="row g-0 h-100">
+                                                <div class="col-4">
+                                                    <img src="@(string.IsNullOrWhiteSpace(product.product_imgurl)
+                                                                                                                 ? Url.Content("~/images/placeholder.png")
+                                                                                                                 : product.product_imgurl)"
+                                         alt="@product.product_name"
+                                         class="img-fluid h-100 w-100 object-fit-cover rounded-start" />
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body d-flex flex-column">
+                                        <h4 class="h6 fw-bold mb-1 text-truncate">@product.product_name</h4>
+                                        <p class="text-muted small mb-2">
+                                            @product.product_contents
+                                        </p>
+                                                        <form asp-controller="Cart"
+                                                              asp-action="Add"
+                                                              method="post"
+                                                              class="mt-auto d-flex justify-content-between align-items-center">
+                                                            <span class="fw-bold fs-5">
+                                                                @product.product_price.ToString("0.##") ₺
+                                                            </span>
+
+                                                            <input type="hidden" name="id" value="@product.product_id" />
+                                                            <input type="hidden" name="quantity" value="1" />
+
+                                                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">
+                                                                <i class="bi bi-plus-lg me-1"></i>Sepete Ekle
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</main>

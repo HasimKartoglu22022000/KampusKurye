@@ -1,0 +1,41 @@
+﻿@model List<KampusKurye.Models.AdminOrderListItemViewModel>
+
+<h2>Tüm Siparişler</h2>
+
+@if (!Model.Any())
+{
+    <p>Hiç sipariş bulunamadı.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sipariş No</th>
+                <th>Restoran</th>
+                <th>Müşteri</th>
+                <th>Teslimat Adresi</th>
+                <th>Müşteri Notu</th>
+                <th>Toplam Tutar</th>
+                <th>Durum</th>
+                <th>Oluşturulma Tarihi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.OrderId (@o.OrderNumber)</td>
+                    <td>@o.RestaurantName</td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.DeliveryAddress</td>
+                    <td>@o.CustomerNote</td>
+                    <td>@o.TotalPrice</td>
+                    <td>@o.Status</td>
+                    <td>@o.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

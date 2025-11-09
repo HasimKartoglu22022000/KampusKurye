@@ -1,0 +1,86 @@
+@model KampusKurye.Models.UsersModel
+@{
+    ViewData["Title"] = "Kullanýcý Oluþtur";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- minimal stil/ikon dahil edilebilir; layout head partial'ý zaten yüklüyor -->
+<main class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8">
+            <h1 class="h4 mb-4">Kayýt Ol</h1>
+
+            <form asp-action="Create" method="post" id="createUserForm" novalidate>
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="user_firstname" class="form-label">Ad</label>
+                        <input asp-for="user_firstname" class="form-control" />
+                        <span asp-validation-for="user_firstname" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="user_lastname" class="form-label">Soyad</label>
+                        <input asp-for="user_lastname" class="form-control" />
+                        <span asp-validation-for="user_lastname" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="user_email" class="form-label">E-posta</label>
+                        <input asp-for="user_email" type="email" class="form-control" />
+                        <span asp-validation-for="user_email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="user_phone" class="form-label">Telefon</label>
+                        <input asp-for="user_phone" class="form-control" />
+                        <span asp-validation-for="user_phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="user_address" class="form-label">Adres</label>
+                        <textarea asp-for="user_address" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="user_address" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="user_password" class="form-label">Þifre</label>
+                        <div class="input-group">
+                            <input asp-for="user_password" type="password" class="form-control" id="user_password" />
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Göster/Gizle">Göster</button>
+                        </div>
+                        <span asp-validation-for="user_password" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="confirmPassword" class="form-label">Þifre Tekrar</label>
+                        <input name="confirmPassword" id="confirmPassword" type="password" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary">Hesap Oluþtur</button>
+                </div>
+            </form>
+
+            @if (TempData["CreateSuccess"] != null)
+            {
+                <div class="alert alert-success mt-3">@TempData["CreateSuccess"]</div>
+            }
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            const input = document.getElementById('user_password');
+            if (!input) return;
+            input.type = input.type === 'password' ? 'text' : 'password';
+            this.textContent = input.type === 'password' ? 'Göster' : 'Gizle';
+        });
+    </script>
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

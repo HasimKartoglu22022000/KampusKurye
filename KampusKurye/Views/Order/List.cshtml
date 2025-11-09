@@ -1,0 +1,61 @@
+﻿@model IEnumerable<KampusKurye.Models.OrderModel>
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <h3 class="fw-semibold mb-4"><i class="ri-shopping-bag-3-line me-2"></i> Siparişlerim</h3>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table align-middle table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td class="fw-medium">@order.order_number</td>
+                            <td>@order.order_created_at.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>@order.order_total_price.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</td>
+                            <td>
+                                @if (order.order_status == 2)
+                                {
+                                    <span class="badge bg-success">@order.order_status</span>
+                                }
+                                else if (order.order_status == 1)
+                                {
+                                    <span class="badge bg-info text-dark">@order.order_status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@order.order_status</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="@Url.Action("Detail", "Order", new { id = order.order_id })" class="btn btn-sm btn-outline-primary">
+                                    <i class="ri-eye-line me-1"></i> Görüntüle
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Henüz hiç siparişiniz bulunmuyor.
+        </div>
+    }
+</div>

@@ -1,0 +1,119 @@
+﻿@model KampusKurye.Models.UsersModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="bg-gray-50 min-h-screen">
+    <div class="container my-5">
+        <div class="card border-0 shadow-sm rounded-4 mx-auto" style="max-width: 700px;">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Başlık -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold mb-1">Kayıt Ol</h2>
+                    <p class="text-muted mb-0">Hesap oluşturmak için bilgilerinizi doldurun.</p>
+                </div>
+
+                <!-- Hata Mesajları -->
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var modelState in ViewData.ModelState.Values)
+                            {
+                                foreach (var error in modelState.Errors)
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- Form -->
+                <form asp-action="Create"
+                      asp-controller="Users"
+                      method="post"
+                      id="accountForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3">
+                        <input type="hidden" asp-for="user_img_url" value="~/images/user.jpg" />
+                        <div class="col-12">
+                            <label asp-for="user_name" class="form-label fw-semibold">Kullanıcı Adı</label>
+                            <input asp-for="user_name" type="text" class="form-control form-control-lg" placeholder="Kullanıcı adınız" required>
+                            <span asp-validation-for="user_name" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="user_firstname" class="form-label fw-semibold">Ad</label>
+                            <input asp-for="user_firstname" type="text" class="form-control form-control-lg" placeholder="Adınız" required>
+                            <span asp-validation-for="user_firstname" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="user_lastname" class="form-label fw-semibold">Soyad</label>
+                            <input asp-for="user_lastname" type="text" class="form-control form-control-lg" placeholder="Soyadınız" required>
+                            <span asp-validation-for="user_lastname" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="user_email" class="form-label fw-semibold">E-posta Adresi</label>
+                            <input asp-for="user_email" type="email" class="form-control form-control-lg" placeholder="ornek@mail.com" required>
+                            <span asp-validation-for="user_email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="user_phone" class="form-label fw-semibold">Telefon</label>
+                            <input asp-for="user_phone" type="tel" class="form-control form-control-lg" placeholder="05xx xxx xx xx">
+                            <span asp-validation-for="user_phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="user_address" class="form-label fw-semibold">Adres</label>
+                            <textarea asp-for="user_address" rows="3" class="form-control form-control-lg" placeholder="Adresinizi giriniz..."></textarea>
+                            <span asp-validation-for="user_address" class="text-danger"></span>
+                        </div>
+
+                        <!-- 🔒 Şifre Alanları -->
+                        <div class="col-md-6">
+                            <label asp-for="user_password" class="form-label fw-semibold">Şifre</label>
+                            <input asp-for="user_password"
+                                   type="password"
+                                   class="form-control form-control-lg"
+                                   placeholder="Şifrenizi belirleyin"
+                                   required>
+                            <span asp-validation-for="user_password" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Şifre Tekrar</label>
+                            <input type="password"
+                                   name="confirmPassword"
+                                   class="form-control form-control-lg"
+                                   placeholder="Şifrenizi tekrar yazın"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Kaydet Butonu -->
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-4 shadow-sm">
+                            <i class="ri-save-3-line me-1"></i> Kayıt Ol
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

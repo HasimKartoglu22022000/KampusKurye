@@ -1,0 +1,156 @@
+﻿@model KampusKurye.Models.CartModel
+@using System.Security.Claims
+@{
+    // Kullanıcının role claim'ini oku ve int'e çevir
+    var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    int userRole = 0;
+    int.TryParse(roleClaim, out userRole);
+}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid">
+
+        <!-- Logo -->
+        <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-3">
+            <img src="https://static.readdy.ai/image/299af702a1196a86d193f030b8851b68/5f91dbafdd551209f52df828ee3ffa22.png"
+                 alt="logo" class="img-fluid" style="height:64px;">
+        </a>
+
+        <!-- Campus selector (desktop only) -->
+        <div class="d-none d-lg-flex align-items-center ms-3">
+            @await Component.InvokeAsync("CampusDropdown")
+        </div>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar content -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <!-- Cart Dropdown -->
+                <li class="nav-item dropdown me-2">
+                    <a class="nav-link btn btn-light position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="ri-shopping-cart-line fs-4"></i>
+
+                        @* Sepette ürün varsa badge göster *@
+                        @if (Model.TotalQuantity > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                @Model.TotalQuantity
+                            </span>
+                        }
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 18rem;">
+
+                        @if (Model.Items == null || !Model.Items.Any())
+                        {
+                            <li class="dropdown-item text-muted small text-center">
+                                Sepetiniz boş
+                            </li>
+                        }
+                        else
+                        {
+                            @* Ürünler *@
+                            @foreach (var item in Model.Items)
+                            {
+                                <li class="dropdown-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="me-2">
+                                            <div class="fw-semibold small text-truncate">
+                                                @item.order_name
+                                            </div>
+                                            <div class="text-muted small">
+                                                Adet: @item.order_quantity
+                                            </div>
+                                        </div>
+                                        <div class="text-end small fw-semibold">
+                                            @((item.order_price * item.order_quantity).ToString("0.##")) ₺
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                            <li><hr class="dropdown-divider" /></li>
+
+                            <li class="dropdown-item d-flex justify-content-between fw-semibold">
+                                <span>Toplam</span>
+                                <span>@Model.TotalPrice.ToString("0.##") ₺</span>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item text-center fw-bold" asp-controller="Cart" asp-action="Index">
+                                    Sepete Git
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+
+                <!-- User dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link btn btn-light d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
+                        <i class="ri-user-line fs-4"></i>
+                    </a>
+
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        var name = User.Identity?.Name ?? "Kullanıcı";
+                        var email = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-item-text">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:38px;height:38px;">
+                                        <i class="ri-user-line"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">@name</div>
+                                        <small class="text-muted">@email</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/Account/Profile">Hesap Bilgileri</a></li>
+                            <li><a class="dropdown-item" href="/Order/List">Siparişlerim</a></li>
+                            @if (User.IsInRole("2"))
+                            {
+                                <li>
+                                    <a class="dropdown-item text-primary fw-semibold" href="/Product/Add">
+                                        <i class="ri-add-line me-1"></i> Ürün Ekle
+                                    </a>
+                                </li>
+                            }
+                            @if (User.Identity.IsAuthenticated && userRole >= 1)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="AdminOrders" asp-action="Index">
+                                        Tüm Siparişler
+                                    </a>
+                                </li>
+                            }
+                            <li>
+                                <form asp-controller="Users" asp-action="Logout" method="post" class="m-0">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item">Çıkış Yap</button>
+                                </form>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/Users/Login">Giriş Yap</a></li>
+                            <li><a class="dropdown-item" href="/Users/Create">Kayıt Ol</a></li>
+                        </ul>
+                    }
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</nav>

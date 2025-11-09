@@ -1,0 +1,99 @@
+﻿@model KampusKurye.Models.UsersModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="bg-gray-50 min-h-screen">
+    <div class="container my-5">
+        <div class="card border-0 shadow-sm rounded-4 mx-auto" style="max-width: 500px;">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Başlık -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold mb-1">Giriş Yap</h2>
+                    <p class="text-muted mb-0">Hesabınıza erişmek için giriş yapın.</p>
+                </div>
+
+                <!-- Hata Mesajları -->
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var modelState in ViewData.ModelState.Values)
+                            {
+                                foreach (var error in modelState.Errors)
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- Form -->
+                <form asp-action="Login"
+                      asp-controller="Users"
+                      method="post"
+                      class="needs-validation"
+                      novalidate>
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="user_name" class="form-label fw-semibold">Kullanıcı Adı</label>
+                        <input asp-for="user_name"
+                               type="text"
+                               class="form-control form-control-lg"
+                               placeholder="Kullanıcı adınız">
+                        <span asp-validation-for="user_name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="user_password" class="form-label fw-semibold">Şifre</label>
+                        <input asp-for="user_password"
+                               type="password"
+                               class="form-control form-control-lg"
+                               placeholder="Şifreniz">
+                        <span asp-validation-for="user_password" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="rememberMe"
+                                   name="rememberMe" />
+                            <label class="form-check-label fw-semibold small" for="rememberMe">
+                                Beni hatırla
+                            </label>
+                        </div>
+
+                        <a href="#" class="small text-primary text-decoration-none">
+                            Şifremi unuttum
+                        </a>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            Giriş Yap
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Hesabın yok mu?</span>
+                        <a asp-controller="Users" asp-action="Create" class="small fw-semibold text-primary text-decoration-none">
+                            Kayıt Ol
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,134 @@
+﻿@model KampusKurye.Models.CartModel
+
+@{
+    ViewData["Title"] = "Sepetim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="bg-gray-50 min-h-screen">
+    <div class="container my-5">
+        <div class="card border-0 shadow-sm rounded-4 mx-auto" style="max-width: 900px;">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Sepetim</h2>
+                    <span class="text-muted">
+                        Toplam ürün: @Model.TotalQuantity
+                    </span>
+                </div>
+
+                @if (Model.Items == null || !Model.Items.Any())
+                {
+                    <div class="alert alert-info mb-0">
+                        Sepetinizde ürün bulunmamaktadır.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive mb-4">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th class="text-center">Adet</th>
+                                    <th class="text-end">Birim Fiyat</th>
+                                    <th class="text-end">Toplam</th>
+                                    <th class="text-end">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.order_img_url))
+                                                {
+                                                    <img src="@item.order_img_url"
+                                                         alt="@item.order_name"
+                                                         class="rounded me-3"
+                                                         style="width: 60px; height: 60px; object-fit: cover;" />
+                                                }
+                                                <span>@item.order_name</span>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <div class="d-inline-flex align-items-center">
+                                                <form asp-controller="Cart" asp-action="Decrease" method="post" class="me-2">
+                                                    <input type="hidden" name="id" value="@item.order_id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
+                                                </form>
+
+                                                <span class="fw-semibold">@item.order_quantity</span>
+
+                                                <form asp-controller="Cart" asp-action="Add" method="post" class="ms-2">
+                                                    <input type="hidden" name="id" value="@item.order_id" />
+                                                    <input type="hidden" name="quantity" value="1" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+                                                </form>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-end">@item.order_price.ToString("C")</td>
+                                        <td class="text-end">@((item.order_price * item.order_quantity).ToString("C"))</td>
+
+                                        <td class="text-end">
+                                            <form asp-controller="Cart" asp-action="Remove" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@item.order_id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    Kaldır
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Sepeti Boşalt -->
+                        <form asp-controller="Cart" asp-action="Clear" method="post">
+                            <button type="submit" class="btn btn-outline-danger">
+                                Sepeti Boşalt
+                            </button>
+                        </form>
+
+                        <!-- Siparişi Tamamla -->
+                        <div class="text-end">
+                            <div class="fw-semibold fs-4 mb-2">
+                                Toplam Tutar: @Model.TotalPrice.ToString("C")
+                            </div>
+
+                            <!-- 🟢 Checkout işlemi: POST ile OrderController'a -->
+                            <form asp-controller="Order" asp-action="Checkout" method="post" class="d-inline text-start">
+                                @Html.AntiForgeryToken()
+
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold">Teslimat Adresi</label>
+                                    <textarea name="order_delivery_address" class="form-control" rows="3"
+                                          placeholder="Adresinizi buraya yazın" required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Sipariş Notu (opsiyonel)</label>
+                                    <textarea name="order_customer_note" class="form-control" rows="2"
+                                          placeholder="Login Olmadan sipariş veriyorsanız iletişim için telefon numarası yazabilrsiniz"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check2-circle me-1"></i> Siparişi Tamamla
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
